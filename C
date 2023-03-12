@@ -1,0 +1,16 @@
+import arcpy
+ #set up the variables and set it to true. 
+parkingSpaces = 500
+arcpy.env.workspace = "C:\\Users\\TQuar\\Desktop\\Codeschool\\week 8\\Exercise7\\Exercise7_C\\Washington.gdb"
+arcpy.env.overwriteOutput = True
+  
+# Set up the query to select lots with 500 spaces
+parkingQuery = "Approx_Par > " + str(parkingSpaces)
+ 
+# Selecting the new points based on the query
+parkAndRideLayer = arcpy.SelectLayerByAttribute_management("ParkAndRide", "NEW_SELECTION", parkingQuery)
+ 
+# Create a feature class from the selection and delete the unnecessary. 
+arcpy.CopyFeatures_management(parkAndRideLayer, "BigParkAndRideFacilities")
+arcpy.Delete_management(parkAndRideLayer)
+#21 points are selected
