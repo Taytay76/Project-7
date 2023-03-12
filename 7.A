@@ -1,0 +1,37 @@
+import arcpy
+ #set up the variable. 
+arcpy.env.overwriteOutput = True
+arcpy.env.workspace = "C:\\Users\\TQuar\\Desktop\\Codeschool\\week 8\\Exercise7\\Exercise7_A\\Washington.gdb"
+cityBoundaries = "CityBoundaries"
+parkAndRide = "ParkAndRide"
+parkAndRideField = "HasParkAndRide" 
+citiesWithParkAndRide = 0              
+
+try:
+    citiesLayer = arcpy.SelectLayerByLocation_management(cityBoundaries, "CONTAINS", parkAndRide)
+  
+    # Gotta close the loop and return with an iterator of names 
+    with arcpy.da.UpdateCursor(citiesLayer, (parkAndRideField)) as cursor:
+        for row in cursor:
+            # switch to true
+            row[0] = "True"
+            cursor.updateRow(row)
+            citiesWithParkAndRide += 1
+except:
+    print ("Issue with spatial selection and cities feature class")
+ 
+finally: 
+    arcpy.Delete_management(citiesLayer)
+    del row, cursor
+      
+# arcpy finds the count of citites
+numCitiesCount = arcpy.GetCount_management(cityBoundaries)
+numCities = int(numCitiesCount[0])
+ 
+ 
+# where I calculate the percent
+percentCitiesWithParkAndRide = (citiesWithParkAndRide / numCities) * 100
+  
+print (str(round(percentCitiesWithParkAndRide,1)) + " cities with a park and ride.")
+
+#68.5 percent of cities have a park and ride.
